@@ -6,7 +6,12 @@ import { PaymentFormModule } from './payment-form/payment-form.module';
 import { CardModule } from '../../../../ui/components/card/card.module';
 import { PaymentMethodComponent } from './payment-method.component';
 import { SpinnerModule } from './../../../../ui/components/spinner/spinner.module';
-import { UserService, I18nModule } from '@spartacus/core';
+import {
+  UserService,
+  ConfigModule,
+  CmsConfig,
+  I18nModule,
+} from '@spartacus/core';
 
 @NgModule({
   imports: [
@@ -16,6 +21,13 @@ import { UserService, I18nModule } from '@spartacus/core';
     CardModule,
     SpinnerModule,
     I18nModule,
+    ConfigModule.withConfig(<CmsConfig>{
+      cmsComponents: {
+        MultistepCheckoutPaymentDetails: {
+          selector: 'cx-payment-method',
+        },
+      },
+    }),
   ],
   providers: [UserService],
   declarations: [PaymentMethodComponent],

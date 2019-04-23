@@ -46,8 +46,8 @@ if (!environment.production) {
         urlEncodingParameters: ['BASE_SITE', 'LANGUAGE', 'CURRENCY'],
         parameters: {
           BASE_SITE: {
-            values: ['electronics-spa', 'apparel-de', 'apparel-uk'],
-            defaultValue: 'electronics-spa',
+            values: ['electronics', 'apparel-de', 'apparel-uk'],
+            defaultValue: 'electronics',
             persistence: 'route',
           },
         },

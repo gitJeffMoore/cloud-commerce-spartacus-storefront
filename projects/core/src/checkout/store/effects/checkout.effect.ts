@@ -12,6 +12,8 @@ import { ProductImageNormalizer } from '../../../product/index';
 import { OccOrderService } from '../../../user/index';
 import { OrderEntry, PaymentDetails } from '../../../occ/occ-models/index';
 import * as fromUserActions from '../../../user/store/actions/index';
+import * as fromCartActions from './../../../cart/store/actions/index';
+import { CheckoutDetails } from '../../models/checkout.model';
 
 @Injectable()
 export class CheckoutEffects {
@@ -45,7 +47,9 @@ export class CheckoutEffects {
 
   @Effect()
   setDeliveryAddress$: Observable<
-    fromActions.SetDeliveryAddressSuccess | fromActions.SetDeliveryAddressFail
+    | fromActions.SetDeliveryAddressSuccess
+    | fromActions.LoadSupportedDeliveryModes
+    | fromActions.SetDeliveryAddressFail
   > = this.actions$.pipe(
     ofType(fromActions.SET_DELIVERY_ADDRESS),
     map((action: any) => action.payload),
@@ -53,7 +57,13 @@ export class CheckoutEffects {
       return this.occCartService
         .setDeliveryAddress(payload.userId, payload.cartId, payload.address.id)
         .pipe(
-          map(() => new fromActions.SetDeliveryAddressSuccess(payload.address)),
+          mergeMap(() => [
+            new fromActions.SetDeliveryAddressSuccess(payload.address),
+            new fromActions.LoadSupportedDeliveryModes({
+              userId: payload.userId,
+              cartId: payload.cartId,
+            }),
+          ]),
           catchError(error => of(new fromActions.SetDeliveryAddressFail(error)))
         );
     })
@@ -82,7 +92,9 @@ export class CheckoutEffects {
 
   @Effect()
   setDeliveryMode$: Observable<
-    fromActions.SetDeliveryModeSuccess | fromActions.SetDeliveryModeFail
+    | fromActions.SetDeliveryModeSuccess
+    | fromActions.SetDeliveryModeFail
+    | fromCartActions.LoadCart
   > = this.actions$.pipe(
     ofType(fromActions.SET_DELIVERY_MODE),
     map((action: any) => action.payload),
@@ -90,9 +102,16 @@ export class CheckoutEffects {
       return this.occCartService
         .setDeliveryMode(payload.userId, payload.cartId, payload.selectedModeId)
         .pipe(
-          map(
-            () => new fromActions.SetDeliveryModeSuccess(payload.selectedModeId)
-          ),
+          mergeMap(() => {
+            return [
+              new fromActions.SetDeliveryModeSuccess(payload.selectedModeId),
+              new fromCartActions.LoadCart({
+                userId: payload.userId,
+                cartId: payload.cartId,
+                details: true,
+              }),
+            ];
+          }),
           catchError(error => of(new fromActions.SetDeliveryModeFail(error)))
         );
     })
@@ -219,6 +238,27 @@ export class CheckoutEffects {
             }),
           ]),
           catchError(error => of(new fromActions.PlaceOrderFail(error)))
+        );
+    })
+  );
+
+  @Effect()
+  loadCheckoutDetails$: Observable<
+    fromActions.LoadCheckoutDetailsSuccess | fromActions.LoadCheckoutDetailsFail
+  > = this.actions$.pipe(
+    ofType(fromActions.LOAD_CHECKOUT_DETAILS),
+    map((action: fromActions.LoadCheckoutDetails) => action.payload),
+    mergeMap(payload => {
+      return this.occCartService
+        .loadCheckoutDetails(payload.userId, payload.cartId)
+        .pipe(
+          map(
+            (data: CheckoutDetails) =>
+              new fromActions.LoadCheckoutDetailsSuccess(data)
+          ),
+          catchError(error =>
+            of(new fromActions.LoadCheckoutDetailsFail(error))
+          )
         );
     })
   );
