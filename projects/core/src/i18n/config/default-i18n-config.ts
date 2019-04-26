@@ -4,18 +4,7 @@ export const defaultI18nConfig: I18nConfig = {
   i18n: {
     fallbackLang: false,
     debug: false,
-    namespaceMapping: {
-      addToCart: 'addToCart',
-      address: 'address',
-      addressBook: 'addressBook',
-      cart: 'cart',
-      cartItems: 'cartItems',
-      checkout: 'checkout',
-      checkoutAddress: 'checkoutAddress',
-      checkoutOrderConfirmation: 'checkoutOrderConfirmation',
-      checkoutProgress: 'checkoutProgress',
-      checkoutReview: 'checkoutReview',
-      checkoutShipping: 'checkoutShipping',
+    chunks: {
       common: 'common',
       spinner: 'common',
       header: 'common',
@@ -30,6 +19,13 @@ export const defaultI18nConfig: I18nConfig = {
       paymentForm: 'payment',
       paymentMethods: 'payment',
 
+      checkout: 'checkout',
+      checkoutAddress: 'checkout',
+      checkoutOrderConfirmation: 'checkout',
+      checkoutProgress: 'checkoutProgress',
+      checkoutReview: 'checkout',
+      checkoutShipping: 'checkout',
+
       orderDetails: 'myAccount',
       orderHistory: 'myAccount',
 
@@ -43,6 +39,9 @@ export const defaultI18nConfig: I18nConfig = {
       loginForm: 'user',
       login: 'user',
       register: 'user',
+      updateEmailForm: 'user',
+      updatePasswordForm: 'user',
+      updateProfileForm: 'user',
 
       storeFinder: 'storeFinder',
       pwa: 'pwa',
