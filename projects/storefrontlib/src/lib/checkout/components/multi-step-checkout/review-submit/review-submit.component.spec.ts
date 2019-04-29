@@ -3,7 +3,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import {
   Address,
-  Cart,
   CartService,
   CheckoutService,
   Country,
@@ -22,7 +21,7 @@ import { ReviewSubmitComponent } from './review-submit.component';
 
 import createSpy = jasmine.createSpy;
 
-const mockCart: Cart = {
+const mockCart: UICart = {
   guid: 'test',
   code: 'test',
   deliveryItemsQuantity: 123,
@@ -109,7 +108,7 @@ class MockUserService {
 }
 
 class MockCartService {
-  getActive(): Observable<Cart> {
+  getActive(): Observable<UICart> {
     return of(mockCart);
   }
   getEntries(): Observable<UIOrderEntry[]> {

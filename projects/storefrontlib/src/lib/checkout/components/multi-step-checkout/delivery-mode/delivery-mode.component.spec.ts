@@ -67,8 +67,6 @@ describe('DeliveryModeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DeliveryModeComponent);
     component = fixture.componentInstance;
-
-    spyOn(component.goToStep, 'emit').and.callThrough();
   });
 
   it('should be created', () => {

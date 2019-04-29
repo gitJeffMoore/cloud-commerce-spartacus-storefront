@@ -48,18 +48,6 @@ class MockCheckoutService {
   }
 }
 
-const mockAddress: Address = {
-  id: 'mock address id',
-  firstName: 'John',
-  lastName: 'Doe',
-  titleCode: 'mr',
-  line1: 'Toyosaki 2 create on cart',
-  line2: 'line2',
-  town: 'town',
-  region: { isocode: 'JP-27' },
-  postalCode: 'zip',
-  country: { isocode: 'JP' },
-};
 const mockPaymentDetails: PaymentDetails = {
   id: 'mock payment id',
   accountHolderName: 'Name',
@@ -189,7 +177,6 @@ describe('MultiStepCheckoutComponent', () => {
     fixture = TestBed.createComponent(MultiStepCheckoutComponent);
     component = fixture.componentInstance;
 
-    spyOn(component, 'addAddress').and.callThrough();
     spyOn(component, 'nextStep').and.callThrough();
   });
 
@@ -284,110 +271,6 @@ describe('MultiStepCheckoutComponent', () => {
 
     expect(component.navs[3].status.active).toBeFalsy();
     expect(component.navs[3].progressBar).toBeFalsy();
-  });
-
-  it('should call addAddress() with new created address', () => {
-    component.addAddress({ address: mockAddress, newAddress: true });
-    expect(mockCheckoutService.createAndSetAddress).toHaveBeenCalledWith(
-      mockAddress
-    );
-  });
-
-  it('should call addAddress() with address selected from existing addresses', () => {
-    component.addAddress({ address: mockAddress, newAddress: false });
-    expect(mockCheckoutService.createAndSetAddress).not.toHaveBeenCalledWith(
-      mockAddress
-    );
-    expect(mockCheckoutService.setDeliveryAddress).toHaveBeenCalledWith(
-      mockAddress
-    );
-  });
-
-  it('should call addAddress() with address already set to the cart, then go to next step direclty', () => {
-    component.deliveryAddress = mockAddress;
-    component.addAddress({ address: mockAddress, newAddress: false });
-
-    expect(component.nextStep).toHaveBeenCalledWith(2);
-    expect(mockCheckoutService.setDeliveryAddress).not.toHaveBeenCalledWith(
-      mockAddress
-    );
-  });
-
-  it('should call setDeliveryMode()', () => {
-    const deliveryMode = {
-      deliveryModeId: 'testId',
-    } as any;
-    component.setDeliveryMode(deliveryMode);
-    expect(mockCheckoutService.setDeliveryMode).toHaveBeenCalledWith(
-      deliveryMode.deliveryModeId
-    );
-  });
-
-  it('should call setDeliveryMode() with the delivery mode already set to cart, go to next step directly', () => {
-    const deliveryMode = {
-      deliveryModeId: 'testId',
-    } as any;
-    component.shippingMethod = 'testId';
-    component.setDeliveryMode(deliveryMode);
-
-    expect(component.nextStep).toHaveBeenCalledWith(3);
-    expect(mockCheckoutService.setDeliveryMode).not.toHaveBeenCalledWith(
-      deliveryMode.deliveryModeId
-    );
-  });
-
-  it('should call addPaymentInfo() with new created payment info', () => {
-    component.deliveryAddress = mockAddress;
-    component.addPaymentInfo({
-      payment: mockPaymentDetails,
-      newPayment: true,
-      billingAddress: null,
-    });
-    expect(mockCheckoutService.createPaymentDetails).toHaveBeenCalledWith(
-      mockPaymentDetails
-    );
-  });
-
-  it('should call addPaymentInfo() with paymenent selected from existing ones', () => {
-    component.deliveryAddress = mockAddress;
-    component.addPaymentInfo({
-      payment: mockPaymentDetails,
-      newPayment: false,
-      billingAddress: null,
-    });
-    expect(mockCheckoutService.createPaymentDetails).not.toHaveBeenCalledWith(
-      mockPaymentDetails
-    );
-    expect(mockCheckoutService.setPaymentDetails).toHaveBeenCalledWith(
-      mockPaymentDetails
-    );
-  });
-
-  it('should call addPaymentInfo() with paymenent already set to cart, then go to next step direclty', () => {
-    component.paymentDetails = mockPaymentDetails;
-    component.deliveryAddress = mockAddress;
-    component.addPaymentInfo({
-      payment: mockPaymentDetails,
-      newPayment: false,
-      billingAddress: null,
-    });
-    expect(component.nextStep).toHaveBeenCalledWith(4);
-    expect(mockCheckoutService.setPaymentDetails).not.toHaveBeenCalledWith(
-      mockPaymentDetails
-    );
-  });
-
-  it('should call placeOrder()', () => {
-    component.placeOrder();
-    expect(mockCheckoutService.placeOrder).toHaveBeenCalled();
-  });
-
-  it('should call toggleTAndC(toggle)', () => {
-    expect(component.tAndCToggler).toBeFalsy();
-    component.toggleTAndC();
-    expect(component.tAndCToggler).toBeTruthy();
-    component.toggleTAndC();
-    expect(component.tAndCToggler).toBeFalsy();
   });
 
   it('should contain proper total value and total items', () => {

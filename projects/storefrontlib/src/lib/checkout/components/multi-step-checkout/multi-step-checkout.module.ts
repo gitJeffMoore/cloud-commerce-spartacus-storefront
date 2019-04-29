@@ -20,6 +20,7 @@ import { CheckoutOrchestratorModule } from './checkout-orchestrator/checkout-orc
 import { CheckoutProgressModule } from './checkout-progress/checkout-progress.module';
 import { CheckoutDetailsService } from '../../checkout-details.service';
 import { CartSharedModule } from '../../../../cms-components/checkout/cart/cart-shared/cart-shared.module';
+import { CheckoutConfigService } from '../../checkout-config.service';
 
 @NgModule({
   imports: [
@@ -45,6 +46,6 @@ import { CartSharedModule } from '../../../../cms-components/checkout/cart/cart-
   ],
   declarations: [MultiStepCheckoutComponent],
   entryComponents: [MultiStepCheckoutComponent],
-  providers: [CheckoutDetailsService],
+  providers: [CheckoutDetailsService, CheckoutConfigService],
 })
 export class MultiStepCheckoutModule {}

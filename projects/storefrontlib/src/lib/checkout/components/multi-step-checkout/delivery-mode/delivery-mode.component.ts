@@ -1,16 +1,12 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  Output,
-  EventEmitter,
-  OnInit,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 
-import { DeliveryMode, CheckoutService } from '@spartacus/core';
+import { DeliveryMode, CheckoutService, RoutingService } from '@spartacus/core';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CheckoutConfigService } from '../../../checkout-config.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'cx-delivery-mode',
@@ -19,12 +15,13 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeliveryModeComponent implements OnInit {
-  @Output()
-  goToStep = new EventEmitter<number>();
-
   supportedDeliveryModes$: Observable<DeliveryMode[]>;
   selectedDeliveryMode$: Observable<DeliveryMode>;
   currentDeliveryModeId: string;
+
+  currentStepUrl = this.checkoutConfigService.getCurrentStepUrl(
+    this.activatedRoute
+  );
 
   mode: FormGroup = this.fb.group({
     deliveryModeId: ['', Validators.required],
@@ -32,7 +29,10 @@ export class DeliveryModeComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private checkoutService: CheckoutService
+    private checkoutService: CheckoutService,
+    private routingService: RoutingService,
+    private checkoutConfigService: CheckoutConfigService,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -56,14 +56,22 @@ export class DeliveryModeComponent implements OnInit {
   }
 
   next(): void {
+    const nextStepUrl = this.checkoutConfigService.getNextCheckoutStepUrl(
+      this.currentStepUrl
+    );
+
     this.setDeliveryMode(this.mode.value.deliveryModeId);
     if (this.currentDeliveryModeId) {
-      this.goToStep.emit(3);
+      this.routingService.go(nextStepUrl);
     }
   }
 
   back(): void {
-    this.goToStep.emit(1);
+    const previousStepUrl = this.checkoutConfigService.getPreviousCheckoutStepUrl(
+      this.currentStepUrl
+    );
+
+    this.routingService.go(previousStepUrl);
   }
 
   get deliveryModeInvalid(): boolean {
